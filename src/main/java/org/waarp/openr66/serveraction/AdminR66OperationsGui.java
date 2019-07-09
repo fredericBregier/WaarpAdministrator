@@ -1,44 +1,20 @@
 /**
  * This file is part of Waarp Project.
- * 
- * Copyright 2009, Frederic Bregier, and individual contributors by the @author tags. See the
- * COPYRIGHT.txt in the distribution for a full listing of individual contributors.
- * 
- * All Waarp Project is free software: you can redistribute it and/or modify it under the terms of
- * the GNU General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- * 
- * Waarp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
+ * <p>
+ * Copyright 2009, Frederic Bregier, and individual contributors by the @author tags. See the COPYRIGHT.txt in the
+ * distribution for a full listing of individual contributors.
+ * <p>
+ * All Waarp Project is free software: you can redistribute it and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ * <p>
+ * Waarp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * <p>
  * You should have received a copy of the GNU General Public License along with Waarp . If not, see
  * <http://www.gnu.org/licenses/>.
  */
 package org.waarp.openr66.serveraction;
-
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingWorker;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.SoftBevelBorder;
 
 import org.waarp.administrator.AdminGui;
 import org.waarp.common.database.DbSession;
@@ -77,10 +53,41 @@ import org.waarp.openr66.server.ConfigImport;
 import org.waarp.openr66.server.LogExport;
 import org.waarp.openr66.server.LogExtendedExport;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.SoftBevelBorder;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -88,20 +95,10 @@ import java.net.SocketAddress;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import javax.swing.JCheckBox;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JSeparator;
-import java.awt.Rectangle;
-import java.awt.Cursor;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
 
 /**
  * @author "Frederic Bregier"
- * 
+ *
  */
 public class AdminR66OperationsGui extends JFrame {
     /**
@@ -109,148 +106,11 @@ public class AdminR66OperationsGui extends JFrame {
      */
     private static final WaarpLogger logger = WaarpLoggerFactory
             .getLogger(AdminR66OperationsGui.class);
-
-    private static AdminR66OperationsGui window;
-
     private static final long serialVersionUID = -7289307852740863337L;
-    private JFrame adminGui;
-    private AdminR66OperationsGui myself = this;
-    private JSplitPane mainPanel;
+    private static AdminR66OperationsGui window;
+    private final ButtonGroup buttonGroup = new ButtonGroup();
     JProgressBar progressBarTransfer;
     R66Dialog dialog;
-
-    /**
-     * @throws HeadlessException
-     */
-    public AdminR66OperationsGui(JFrame adminGui) throws HeadlessException {
-        super(Messages.getString("AdminR66OperationsGui.0") + Configuration.configuration.getHOST_ID()); //$NON-NLS-1$
-        setMinimumSize(new Dimension(1100, 700));
-        setPreferredSize(new Dimension(1100, 800));
-        this.adminGui = adminGui;
-        mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
-        mainPanel.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent arg0) {
-                mainPanel.setDividerLocation(mainPanel.getHeight() / 3);
-            }
-        });
-        mainPanel.setDividerSize(2);
-        mainPanel.setAutoscrolls(true);
-        mainPanel.setBorder(new CompoundBorder());
-        mainPanel.setOneTouchExpandable(true);
-        setContentPane(mainPanel);
-        initializePanel();
-    }
-
-    private void initializePanel() {
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setPreferredSize(new Dimension(50, 250));
-        buttonPanel.setMinimumSize(new Dimension(50, 250));
-        GridBagLayout buttons = new GridBagLayout();
-        buttons.columnWidths = new int[] { 194, 124, 0, 0, 0 };
-        buttons.rowHeights = new int[] { 0, 0, 0, 0 };
-        buttons.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-        buttons.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0 };
-        buttonPanel.setLayout(buttons);
-        mainPanel.setBottomComponent(buttonPanel);
-
-        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.setMinimumSize(new Dimension(5, 300));
-        tabbedPane.setPreferredSize(new Dimension(5, 300));
-        mainPanel.setTopComponent(tabbedPane);
-
-        scrollPane_1 = new JScrollPane();
-        scrollPane_1
-                .setViewportBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-        GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
-        gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
-        gbc_scrollPane_1.weighty = 1.0;
-        gbc_scrollPane_1.weightx = 1.0;
-        gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
-        gbc_scrollPane_1.gridwidth = 5;
-        // gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
-        gbc_scrollPane_1.gridx = 0;
-        gbc_scrollPane_1.gridy = 0;
-        buttonPanel.add(scrollPane_1, gbc_scrollPane_1);
-
-        textFieldStatus = new JEditorPane();
-        textFieldStatus.setToolTipText(Messages.getString("R66ClientGui.21")); //$NON-NLS-1$
-        scrollPane_1.setViewportView(textFieldStatus);
-        textFieldStatus.setForeground(Color.GRAY);
-        textFieldStatus.setBackground(new Color(255, 255, 153));
-        textFieldStatus.setContentType("text/html");
-        textFieldStatus.setEditable(false);
-
-        scrollPane = new JScrollPane();
-        scrollPane.setViewportBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null,
-                null));
-        GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-        gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
-        gbc_scrollPane.weighty = 1.0;
-        gbc_scrollPane.weightx = 1.0;
-        gbc_scrollPane.fill = GridBagConstraints.BOTH;
-        gbc_scrollPane.gridwidth = 5;
-        gbc_scrollPane.gridx = 0;
-        gbc_scrollPane.gridy = 1;
-        buttonPanel.add(scrollPane, gbc_scrollPane);
-
-        textPaneLog = new JTextArea();
-        scrollPane.setViewportView(textPaneLog);
-        textPaneLog.setToolTipText(Messages.getString("R66ClientGui.23")); //$NON-NLS-1$
-        textPaneLog.setEditable(false);
-
-        System.setOut(new PrintStream(new JTextAreaOutputStream(textPaneLog)));
-        DbSession session = DbConstant.admin != null ? DbConstant.admin.getSession() : null;
-        try {
-            comboBoxServer = new JComboBox(DbHostAuth.getAllHosts(session));
-        } catch (WaarpDatabaseNoConnectionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return;
-        } catch (WaarpDatabaseSqlException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return;
-        }
-        comboBoxServer.setMinimumSize(new Dimension(28, 22));
-        GridBagConstraints gbc_comboBoxServer = new GridBagConstraints();
-        gbc_comboBoxServer.gridwidth = 2;
-        gbc_comboBoxServer.insets = new Insets(0, 0, 5, 5);
-        gbc_comboBoxServer.fill = GridBagConstraints.HORIZONTAL;
-        gbc_comboBoxServer.gridx = 0;
-        gbc_comboBoxServer.gridy = 2;
-        buttonPanel.add(comboBoxServer, gbc_comboBoxServer);
-
-        progressBarTransfer = new JProgressBar();
-        progressBarTransfer.setPreferredSize(new Dimension(500, 14));
-        GridBagConstraints gbc_pb = new GridBagConstraints();
-        gbc_pb.gridwidth = 3;
-        gbc_pb.insets = new Insets(0, 0, 0, 5);
-        gbc_pb.fill = GridBagConstraints.BOTH;
-        gbc_pb.gridx = 0;
-        gbc_pb.gridy = 3;
-        buttonPanel.add(progressBarTransfer, gbc_pb);
-
-        JButton btnCancel = new JButton(Messages.getString("AdminR66OperationsGui.Close")); //$NON-NLS-1$
-        btnCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
-        GridBagConstraints gbc_btnCancel = new GridBagConstraints();
-        gbc_btnCancel.insets = new Insets(0, 0, 0, 5);
-        gbc_btnCancel.gridx = 3;
-        gbc_btnCancel.gridy = 3;
-        buttonPanel.add(btnCancel, gbc_btnCancel);
-        progressBarTransfer.setVisible(false);
-
-        initBandwidth(tabbedPane);
-        initConfig(tabbedPane);
-        initLog(tabbedPane);
-        initShutdown(tabbedPane);
-        mainPanel.setDividerLocation(200);
-    }
-
     JButton btnGetBandwidthCurrent, btnGetConfigCurrent;
     JButton btnSetBandwidthConfiguration, btnSetConfigConfiguration;
     JFormattedTextField globWriteLimit;
@@ -261,6 +121,9 @@ public class AdminR66OperationsGui extends JFrame {
     JEditorPane textFieldStatus;
     JScrollPane scrollPane;
     JTextArea textPaneLog;
+    private JFrame adminGui;
+    private AdminR66OperationsGui myself = this;
+    private JSplitPane mainPanel;
     private JCheckBox chckbxHosts;
     private JCheckBox chckbxRules;
     private JTextField textFieldHosts;
@@ -312,7 +175,151 @@ public class AdminR66OperationsGui extends JFrame {
     private JRadioButton rdbtnShutdown;
     private JRadioButton rdbtnBlock;
     private JCheckBox chckbxRestart;
-    private final ButtonGroup buttonGroup = new ButtonGroup();
+    /**
+     * @throws HeadlessException
+     */
+    public AdminR66OperationsGui(JFrame adminGui) throws HeadlessException {
+        super(Messages.getString("AdminR66OperationsGui.0") + Configuration.configuration.getHOST_ID()); //$NON-NLS-1$
+        setMinimumSize(new Dimension(1100, 700));
+        setPreferredSize(new Dimension(1100, 800));
+        this.adminGui = adminGui;
+        mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
+        mainPanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent arg0) {
+                mainPanel.setDividerLocation(mainPanel.getHeight() / 3);
+            }
+        });
+        mainPanel.setDividerSize(2);
+        mainPanel.setAutoscrolls(true);
+        mainPanel.setBorder(new CompoundBorder());
+        mainPanel.setOneTouchExpandable(true);
+        setContentPane(mainPanel);
+        initializePanel();
+    }
+
+    /**
+     * @return the window
+     */
+    public static AdminR66OperationsGui getWindow() {
+        return window;
+    }
+
+    /**
+     * @param window the window to set
+     */
+    public static void setWindow(AdminR66OperationsGui window) {
+        AdminR66OperationsGui.window = window;
+    }
+
+    private void initializePanel() {
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setPreferredSize(new Dimension(50, 250));
+        buttonPanel.setMinimumSize(new Dimension(50, 250));
+        GridBagLayout buttons = new GridBagLayout();
+        buttons.columnWidths = new int[] { 194, 124, 0, 0, 0 };
+        buttons.rowHeights = new int[] { 0, 0, 0, 0 };
+        buttons.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+        buttons.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0 };
+        buttonPanel.setLayout(buttons);
+        mainPanel.setBottomComponent(buttonPanel);
+
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane.setMinimumSize(new Dimension(5, 300));
+        tabbedPane.setPreferredSize(new Dimension(5, 300));
+        mainPanel.setTopComponent(tabbedPane);
+
+        scrollPane_1 = new JScrollPane();
+        scrollPane_1
+                .setViewportBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+        GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
+        gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
+        gbc_scrollPane_1.weighty = 1.0;
+        gbc_scrollPane_1.weightx = 1.0;
+        gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
+        gbc_scrollPane_1.gridwidth = 5;
+        // gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
+        gbc_scrollPane_1.gridx = 0;
+        gbc_scrollPane_1.gridy = 0;
+        buttonPanel.add(scrollPane_1, gbc_scrollPane_1);
+
+        textFieldStatus = new JEditorPane();
+        textFieldStatus.setToolTipText(Messages.getString("R66ClientGui.21")); //$NON-NLS-1$
+        scrollPane_1.setViewportView(textFieldStatus);
+        textFieldStatus.setForeground(Color.GRAY);
+        textFieldStatus.setBackground(new Color(255, 255, 153));
+        textFieldStatus.setContentType("text/html");
+        textFieldStatus.setEditable(false);
+
+        scrollPane = new JScrollPane();
+        scrollPane.setViewportBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null,
+                                                         null));
+        GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+        gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
+        gbc_scrollPane.weighty = 1.0;
+        gbc_scrollPane.weightx = 1.0;
+        gbc_scrollPane.fill = GridBagConstraints.BOTH;
+        gbc_scrollPane.gridwidth = 5;
+        gbc_scrollPane.gridx = 0;
+        gbc_scrollPane.gridy = 1;
+        buttonPanel.add(scrollPane, gbc_scrollPane);
+
+        textPaneLog = new JTextArea();
+        scrollPane.setViewportView(textPaneLog);
+        textPaneLog.setToolTipText(Messages.getString("R66ClientGui.23")); //$NON-NLS-1$
+        textPaneLog.setEditable(false);
+
+        System.setOut(new PrintStream(new JTextAreaOutputStream(textPaneLog)));
+        DbSession session = DbConstant.admin != null? DbConstant.admin.getSession() : null;
+        try {
+            comboBoxServer = new JComboBox(DbHostAuth.getAllHosts(session));
+        } catch (WaarpDatabaseNoConnectionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return;
+        } catch (WaarpDatabaseSqlException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return;
+        }
+        comboBoxServer.setMinimumSize(new Dimension(28, 22));
+        GridBagConstraints gbc_comboBoxServer = new GridBagConstraints();
+        gbc_comboBoxServer.gridwidth = 2;
+        gbc_comboBoxServer.insets = new Insets(0, 0, 5, 5);
+        gbc_comboBoxServer.fill = GridBagConstraints.HORIZONTAL;
+        gbc_comboBoxServer.gridx = 0;
+        gbc_comboBoxServer.gridy = 2;
+        buttonPanel.add(comboBoxServer, gbc_comboBoxServer);
+
+        progressBarTransfer = new JProgressBar();
+        progressBarTransfer.setPreferredSize(new Dimension(500, 14));
+        GridBagConstraints gbc_pb = new GridBagConstraints();
+        gbc_pb.gridwidth = 3;
+        gbc_pb.insets = new Insets(0, 0, 0, 5);
+        gbc_pb.fill = GridBagConstraints.BOTH;
+        gbc_pb.gridx = 0;
+        gbc_pb.gridy = 3;
+        buttonPanel.add(progressBarTransfer, gbc_pb);
+
+        JButton btnCancel = new JButton(Messages.getString("AdminR66OperationsGui.Close")); //$NON-NLS-1$
+        btnCancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                close();
+            }
+        });
+        GridBagConstraints gbc_btnCancel = new GridBagConstraints();
+        gbc_btnCancel.insets = new Insets(0, 0, 0, 5);
+        gbc_btnCancel.gridx = 3;
+        gbc_btnCancel.gridy = 3;
+        buttonPanel.add(btnCancel, gbc_btnCancel);
+        progressBarTransfer.setVisible(false);
+
+        initBandwidth(tabbedPane);
+        initConfig(tabbedPane);
+        initLog(tabbedPane);
+        initShutdown(tabbedPane);
+        mainPanel.setDividerLocation(200);
+    }
 
     private void initBandwidth(JTabbedPane tabbedPane) {
         JPanel bandwidthPanel = new JPanel();
@@ -566,7 +573,8 @@ public class AdminR66OperationsGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 File result = openFile(
                         textFieldHosts.getText(),
-                        Messages.getString("AdminR66OperationsGui.Choose") + Messages.getString("AdminR66OperationsGui.22"), "xml"); //$NON-NLS-1$
+                        Messages.getString("AdminR66OperationsGui.Choose") +
+                        Messages.getString("AdminR66OperationsGui.22"), "xml"); //$NON-NLS-1$
                 if (result != null) {
                     textFieldHosts.setText(result.getAbsolutePath());
                 }
@@ -592,7 +600,8 @@ public class AdminR66OperationsGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 File result = openFile(
                         textFieldRules.getText(),
-                        Messages.getString("AdminR66OperationsGui.Choose") + Messages.getString("AdminR66OperationsGui.25"), "xml"); //$NON-NLS-1$
+                        Messages.getString("AdminR66OperationsGui.Choose") +
+                        Messages.getString("AdminR66OperationsGui.25"), "xml"); //$NON-NLS-1$
                 if (result != null) {
                     textFieldRules.setText(result.getAbsolutePath());
                 }
@@ -619,7 +628,8 @@ public class AdminR66OperationsGui extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     File result = openFile(
                             textFieldBusiness.getText(),
-                            Messages.getString("AdminR66OperationsGui.Choose") + Messages.getString("AdminR66OperationsGui.28"), "xml"); //$NON-NLS-1$
+                            Messages.getString("AdminR66OperationsGui.Choose") +
+                            Messages.getString("AdminR66OperationsGui.28"), "xml"); //$NON-NLS-1$
                     if (result != null) {
                         textFieldBusiness.setText(result.getAbsolutePath());
                     }
@@ -649,7 +659,8 @@ public class AdminR66OperationsGui extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     File result = openFile(
                             textFieldAlias.getText(),
-                            Messages.getString("AdminR66OperationsGui.Choose") + Messages.getString("AdminR66OperationsGui.31"), "xml"); //$NON-NLS-1$
+                            Messages.getString("AdminR66OperationsGui.Choose") +
+                            Messages.getString("AdminR66OperationsGui.31"), "xml"); //$NON-NLS-1$
                     if (result != null) {
                         textFieldAlias.setText(result.getAbsolutePath());
                     }
@@ -677,7 +688,8 @@ public class AdminR66OperationsGui extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     File result = openFile(
                             textFieldRoles.getText(),
-                            Messages.getString("AdminR66OperationsGui.Choose") + Messages.getString("AdminR66OperationsGui.34"), "xml"); //$NON-NLS-1$
+                            Messages.getString("AdminR66OperationsGui.Choose") +
+                            Messages.getString("AdminR66OperationsGui.34"), "xml"); //$NON-NLS-1$
                     if (result != null) {
                         textFieldRoles.setText(result.getAbsolutePath());
                     }
@@ -719,7 +731,8 @@ public class AdminR66OperationsGui extends JFrame {
         }
         {
             chckbxPurgeHosts = new JCheckBox(
-                    Messages.getString("AdminR66OperationsGui.Purge") + Messages.getString("AdminR66OperationsGui.Hosts")); //$NON-NLS-1$
+                    Messages.getString("AdminR66OperationsGui.Purge") +
+                    Messages.getString("AdminR66OperationsGui.Hosts")); //$NON-NLS-1$
             GridBagConstraints gbc_chckbxPurgeHosts = new GridBagConstraints();
             gbc_chckbxPurgeHosts.insets = new Insets(0, 0, 5, 5);
             gbc_chckbxPurgeHosts.gridx = 2;
@@ -728,7 +741,8 @@ public class AdminR66OperationsGui extends JFrame {
         }
         {
             chckbxPurgeRules = new JCheckBox(
-                    Messages.getString("AdminR66OperationsGui.Purge") + Messages.getString("AdminR66OperationsGui.Rules")); //$NON-NLS-1$
+                    Messages.getString("AdminR66OperationsGui.Purge") +
+                    Messages.getString("AdminR66OperationsGui.Rules")); //$NON-NLS-1$
             GridBagConstraints gbc_chckbxPurgeRules = new GridBagConstraints();
             gbc_chckbxPurgeRules.insets = new Insets(0, 0, 5, 5);
             gbc_chckbxPurgeRules.gridx = 3;
@@ -737,7 +751,8 @@ public class AdminR66OperationsGui extends JFrame {
         }
         {
             chckbxPurgeBusiness = new JCheckBox(
-                    Messages.getString("AdminR66OperationsGui.Purge") + Messages.getString("AdminR66OperationsGui.Business")); //$NON-NLS-1$
+                    Messages.getString("AdminR66OperationsGui.Purge") +
+                    Messages.getString("AdminR66OperationsGui.Business")); //$NON-NLS-1$
             GridBagConstraints gbc_chckbxPurgeBusiness = new GridBagConstraints();
             gbc_chckbxPurgeBusiness.insets = new Insets(0, 0, 5, 5);
             gbc_chckbxPurgeBusiness.gridx = 1;
@@ -746,7 +761,8 @@ public class AdminR66OperationsGui extends JFrame {
         }
         {
             chckbxPurgeAlias = new JCheckBox(
-                    Messages.getString("AdminR66OperationsGui.Purge") + Messages.getString("AdminR66OperationsGui.Alias")); //$NON-NLS-1$
+                    Messages.getString("AdminR66OperationsGui.Purge") +
+                    Messages.getString("AdminR66OperationsGui.Alias")); //$NON-NLS-1$
             GridBagConstraints gbc_chckbxPurgeAlias = new GridBagConstraints();
             gbc_chckbxPurgeAlias.insets = new Insets(0, 0, 5, 5);
             gbc_chckbxPurgeAlias.gridx = 2;
@@ -755,7 +771,8 @@ public class AdminR66OperationsGui extends JFrame {
         }
         {
             chckbxPurgeRoles = new JCheckBox(
-                    Messages.getString("AdminR66OperationsGui.Purge") + Messages.getString("AdminR66OperationsGui.Roles")); //$NON-NLS-1$
+                    Messages.getString("AdminR66OperationsGui.Purge") +
+                    Messages.getString("AdminR66OperationsGui.Roles")); //$NON-NLS-1$
             GridBagConstraints gbc_chckbxPurgeRoles = new GridBagConstraints();
             gbc_chckbxPurgeRoles.insets = new Insets(0, 0, 5, 5);
             gbc_chckbxPurgeRoles.gridx = 3;
@@ -1082,57 +1099,6 @@ public class AdminR66OperationsGui extends JFrame {
         this.setVisible(false);
     }
 
-    /**
-     * @author Frederic Bregier
-     * 
-     */
-    public class R66AdminGuiActions extends SwingWorker<String, Integer> {
-        static final int BANDWIDTHGET = 1;
-        static final int BANDWIDTHSET = 2;
-        static final int CONFIGEXPORT = 3;
-        static final int CONFIGIMPORT = 4;
-        static final int LOGEXPORT = 5;
-        static final int SHUTDOWN = 6;
-
-        int method;
-
-        R66AdminGuiActions(int method) {
-            this.method = method;
-        }
-
-        @Override
-        protected String doInBackground() throws Exception {
-            disableAllButtons();
-            startRequest();
-            switch (method) {
-                case BANDWIDTHGET:
-                    getBandwidth();
-                    break;
-                case BANDWIDTHSET:
-                    setBandwidth();
-                    break;
-                case CONFIGEXPORT:
-                    getConfig();
-                    break;
-                case CONFIGIMPORT:
-                    setConfig();
-                    break;
-                case LOGEXPORT:
-                    exportLog();
-                    break;
-                case SHUTDOWN:
-                    shutdown();
-                    break;
-                default:
-                    AdminGui.getEnvironnement().GuiResultat = Messages.getString("R66ClientGui.24"); //$NON-NLS-1$
-            }
-            setStatus(AdminGui.getEnvironnement().GuiResultat);
-            showDialog();
-            stopRequest();
-            return AdminGui.getEnvironnement().GuiResultat;
-        }
-    }
-
     private File openFile(String currentValue, String text, String extension) {
         JFileChooser chooser = null;
         if (currentValue != null) {
@@ -1206,7 +1172,7 @@ public class AdminR66OperationsGui extends JFrame {
         try {
             int idx = comboBoxServer.getSelectedIndex();
             comboBoxServer.removeAllItems();
-            DbSession session = DbConstant.admin != null ? DbConstant.admin.getSession() : null;
+            DbSession session = DbConstant.admin != null? DbConstant.admin.getSession() : null;
             for (DbHostAuth auth : DbHostAuth.getAllHosts(session)) {
                 //System.err.println("Add: "+auth.toString());
                 comboBoxServer.addItem(auth);
@@ -1237,7 +1203,7 @@ public class AdminR66OperationsGui extends JFrame {
         R66Future future = new R66Future(true);
         ChangeBandwidthLimits bandwidthLimits =
                 new ChangeBandwidthLimits(future, -1, -1, -1, -1,
-                        AdminGui.getEnvironnement().networkTransaction);
+                                          AdminGui.getEnvironnement().networkTransaction);
         bandwidthLimits.setHost(host);
         bandwidthLimits.run();
         future.awaitUninterruptibly();
@@ -1273,21 +1239,25 @@ public class AdminR66OperationsGui extends JFrame {
                 }
             }
             if (result.getCode() == ErrorCode.Warning) {
-                message = Messages.getString("RequestInformation.Warned") + Messages.getString("AdminR66OperationsGui.70") + //$NON-NLS-1$
-                        (result.getOther() != null ? sresult :
-                                Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
-                        + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Warned") +
+                          Messages.getString("AdminR66OperationsGui.70") + //$NON-NLS-1$
+                          (result.getOther() != null? sresult :
+                                  Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
+                          + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
             } else {
-                message = Messages.getString("RequestInformation.Success") + Messages.getString("AdminR66OperationsGui.70") + //$NON-NLS-1$
-                        (result.getOther() != null ? sresult :
-                                Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
-                        + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Success") +
+                          Messages.getString("AdminR66OperationsGui.70") + //$NON-NLS-1$
+                          (result.getOther() != null? sresult :
+                                  Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
+                          + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
             }
         } else {
             if (result.getCode() == ErrorCode.Warning) {
-                message = Messages.getString("RequestInformation.Warned") + Messages.getString("AdminR66OperationsGui.70") + future.getCause(); //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Warned") +
+                          Messages.getString("AdminR66OperationsGui.70") + future.getCause(); //$NON-NLS-1$
             } else {
-                message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.70") + future.getCause(); //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Failure") +
+                          Messages.getString("AdminR66OperationsGui.70") + future.getCause(); //$NON-NLS-1$
             }
         }
         AdminGui.getEnvironnement().GuiResultat = message;
@@ -1303,10 +1273,10 @@ public class AdminR66OperationsGui extends JFrame {
         R66Future future = new R66Future(true);
         ChangeBandwidthLimits bandwidthLimits =
                 new ChangeBandwidthLimits(future, (Long) globWriteLimit.getValue(),
-                        (Long) globReadLimit.getValue(),
-                        (Long) sessionWriteLimit.getValue(),
-                        (Long) sessionReadLimit.getValue(),
-                        AdminGui.getEnvironnement().networkTransaction);
+                                          (Long) globReadLimit.getValue(),
+                                          (Long) sessionWriteLimit.getValue(),
+                                          (Long) sessionReadLimit.getValue(),
+                                          AdminGui.getEnvironnement().networkTransaction);
         bandwidthLimits.setHost(host);
         bandwidthLimits.run();
         future.awaitUninterruptibly();
@@ -1329,21 +1299,25 @@ public class AdminR66OperationsGui extends JFrame {
                 }
             }
             if (result.getCode() == ErrorCode.Warning) {
-                message = Messages.getString("RequestInformation.Warned") + Messages.getString("AdminR66OperationsGui.70") + //$NON-NLS-1$
-                        (result.getOther() != null ? sresult :
-                                Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
-                        + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Warned") +
+                          Messages.getString("AdminR66OperationsGui.70") + //$NON-NLS-1$
+                          (result.getOther() != null? sresult :
+                                  Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
+                          + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
             } else {
-                message = Messages.getString("RequestInformation.Success") + Messages.getString("AdminR66OperationsGui.70") + //$NON-NLS-1$
-                        (result.getOther() != null ? sresult :
-                                Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
-                        + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Success") +
+                          Messages.getString("AdminR66OperationsGui.70") + //$NON-NLS-1$
+                          (result.getOther() != null? sresult :
+                                  Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
+                          + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
             }
         } else {
             if (result.getCode() == ErrorCode.Warning) {
-                message = Messages.getString("RequestInformation.Warned") + Messages.getString("AdminR66OperationsGui.70") + future.getCause(); //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Warned") +
+                          Messages.getString("AdminR66OperationsGui.70") + future.getCause(); //$NON-NLS-1$
             } else {
-                message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.70") + future.getCause(); //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Failure") +
+                          Messages.getString("AdminR66OperationsGui.70") + future.getCause(); //$NON-NLS-1$
             }
         }
         AdminGui.getEnvironnement().GuiResultat = message;
@@ -1364,7 +1338,7 @@ public class AdminR66OperationsGui extends JFrame {
         boolean getRoles = chckbxRoles.isSelected();
         String ruleToGet = (String) textRuleUsedToGet.getSelectedItem();
         ConfigExport export = new ConfigExport(future, getHost, getRule, getBusiness, getAlias, getRoles,
-                AdminGui.getEnvironnement().networkTransaction);
+                                               AdminGui.getEnvironnement().networkTransaction);
         export.setHost(host);
         export.run();
         future.awaitUninterruptibly();
@@ -1392,7 +1366,8 @@ public class AdminR66OperationsGui extends JFrame {
                     }
                     if (message.length() > 1) {
                         // error
-                        message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.123") + message; //$NON-NLS-1$
+                        message = Messages.getString("RequestInformation.Failure") +
+                                  Messages.getString("AdminR66OperationsGui.123") + message; //$NON-NLS-1$
                     } else {
                         if (getHost && shost != null && !shost.isEmpty()) {
                             future = new R66Future(true);
@@ -1401,8 +1376,9 @@ public class AdminR66OperationsGui extends JFrame {
                                     host.getHostid(),
                                     shost,
                                     ruleToGet,
-                                    Messages.getString("AdminR66OperationsGui.Hosts") + Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
-                                            + AdminGui.getEnvironnement().hostId,
+                                    Messages.getString("AdminR66OperationsGui.Hosts") +
+                                    Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
+                                    + AdminGui.getEnvironnement().hostId,
                                     AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                                     DbConstant.ILLEGALVALUE,
                                     AdminGui.getEnvironnement().networkTransaction);
@@ -1410,10 +1386,13 @@ public class AdminR66OperationsGui extends JFrame {
                             if (future.isSuccess()) {
                                 R66Result resultHost = future.getResult();
                                 shost = resultHost.getFile().getTrueFile().getAbsolutePath();
-                                message += Messages.getString("AdminR66OperationsGui.Hosts") + Messages.getString("AdminR66OperationsGui.FileInto") + shost + "\n"; //$NON-NLS-1$
+                                message += Messages.getString("AdminR66OperationsGui.Hosts") +
+                                           Messages.getString("AdminR66OperationsGui.FileInto") + shost +
+                                           "\n"; //$NON-NLS-1$
                             } else {
                                 getHost = false;
-                                shost = Messages.getString("AdminR66OperationsGui.CantGetFile") + Messages.getString("AdminR66OperationsGui.Hosts") + ": " + shost; //$NON-NLS-1$
+                                shost = Messages.getString("AdminR66OperationsGui.CantGetFile") +
+                                        Messages.getString("AdminR66OperationsGui.Hosts") + ": " + shost; //$NON-NLS-1$
                                 message += shost;
                             }
                         }
@@ -1424,8 +1403,9 @@ public class AdminR66OperationsGui extends JFrame {
                                     host.getHostid(),
                                     srule,
                                     ruleToGet,
-                                    Messages.getString("AdminR66OperationsGui.Rules") + Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
-                                            + AdminGui.getEnvironnement().hostId,
+                                    Messages.getString("AdminR66OperationsGui.Rules") +
+                                    Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
+                                    + AdminGui.getEnvironnement().hostId,
                                     AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                                     DbConstant.ILLEGALVALUE,
                                     AdminGui.getEnvironnement().networkTransaction);
@@ -1433,10 +1413,13 @@ public class AdminR66OperationsGui extends JFrame {
                             if (future.isSuccess()) {
                                 R66Result resultRule = future.getResult();
                                 srule = resultRule.getFile().getTrueFile().getAbsolutePath();
-                                message += Messages.getString("AdminR66OperationsGui.Rules") + Messages.getString("AdminR66OperationsGui.FileInto") + srule + "\n"; //$NON-NLS-1$
+                                message += Messages.getString("AdminR66OperationsGui.Rules") +
+                                           Messages.getString("AdminR66OperationsGui.FileInto") + srule +
+                                           "\n"; //$NON-NLS-1$
                             } else {
                                 getRule = false;
-                                srule = Messages.getString("AdminR66OperationsGui.CantGetFile") + Messages.getString("AdminR66OperationsGui.Rules") + ": " + srule; //$NON-NLS-1$
+                                srule = Messages.getString("AdminR66OperationsGui.CantGetFile") +
+                                        Messages.getString("AdminR66OperationsGui.Rules") + ": " + srule; //$NON-NLS-1$
                                 message += srule;
                             }
                         }
@@ -1447,8 +1430,9 @@ public class AdminR66OperationsGui extends JFrame {
                                     host.getHostid(),
                                     sbusiness,
                                     ruleToGet,
-                                    Messages.getString("AdminR66OperationsGui.Business") + Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
-                                            + AdminGui.getEnvironnement().hostId,
+                                    Messages.getString("AdminR66OperationsGui.Business") +
+                                    Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
+                                    + AdminGui.getEnvironnement().hostId,
                                     AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                                     DbConstant.ILLEGALVALUE,
                                     AdminGui.getEnvironnement().networkTransaction);
@@ -1456,10 +1440,14 @@ public class AdminR66OperationsGui extends JFrame {
                             if (future.isSuccess()) {
                                 R66Result resultRule = future.getResult();
                                 sbusiness = resultRule.getFile().getTrueFile().getAbsolutePath();
-                                message += Messages.getString("AdminR66OperationsGui.Business") + Messages.getString("AdminR66OperationsGui.FileInto") + sbusiness + "\n"; //$NON-NLS-1$
+                                message += Messages.getString("AdminR66OperationsGui.Business") +
+                                           Messages.getString("AdminR66OperationsGui.FileInto") + sbusiness +
+                                           "\n"; //$NON-NLS-1$
                             } else {
                                 getBusiness = false;
-                                sbusiness = Messages.getString("AdminR66OperationsGui.CantGetFile") + Messages.getString("AdminR66OperationsGui.Business") + ": " + sbusiness; //$NON-NLS-1$
+                                sbusiness = Messages.getString("AdminR66OperationsGui.CantGetFile") +
+                                            Messages.getString("AdminR66OperationsGui.Business") + ": " +
+                                            sbusiness; //$NON-NLS-1$
                                 message += sbusiness;
                             }
                         }
@@ -1470,8 +1458,9 @@ public class AdminR66OperationsGui extends JFrame {
                                     host.getHostid(),
                                     salias,
                                     ruleToGet,
-                                    Messages.getString("AdminR66OperationsGui.Alias") + Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
-                                            + AdminGui.getEnvironnement().hostId,
+                                    Messages.getString("AdminR66OperationsGui.Alias") +
+                                    Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
+                                    + AdminGui.getEnvironnement().hostId,
                                     AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                                     DbConstant.ILLEGALVALUE,
                                     AdminGui.getEnvironnement().networkTransaction);
@@ -1479,10 +1468,14 @@ public class AdminR66OperationsGui extends JFrame {
                             if (future.isSuccess()) {
                                 R66Result resultRule = future.getResult();
                                 salias = resultRule.getFile().getTrueFile().getAbsolutePath();
-                                message += Messages.getString("AdminR66OperationsGui.Alias") + Messages.getString("AdminR66OperationsGui.FileInto") + salias + "\n"; //$NON-NLS-1$
+                                message += Messages.getString("AdminR66OperationsGui.Alias") +
+                                           Messages.getString("AdminR66OperationsGui.FileInto") + salias +
+                                           "\n"; //$NON-NLS-1$
                             } else {
                                 getAlias = false;
-                                salias = Messages.getString("AdminR66OperationsGui.CantGetFile") + Messages.getString("AdminR66OperationsGui.Alias") + ": " + salias; //$NON-NLS-1$
+                                salias = Messages.getString("AdminR66OperationsGui.CantGetFile") +
+                                         Messages.getString("AdminR66OperationsGui.Alias") + ": " +
+                                         salias; //$NON-NLS-1$
                                 message += salias;
                             }
                         }
@@ -1493,8 +1486,9 @@ public class AdminR66OperationsGui extends JFrame {
                                     host.getHostid(),
                                     srole,
                                     ruleToGet,
-                                    Messages.getString("AdminR66OperationsGui.Roles") + Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
-                                            + AdminGui.getEnvironnement().hostId,
+                                    Messages.getString("AdminR66OperationsGui.Roles") +
+                                    Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
+                                    + AdminGui.getEnvironnement().hostId,
                                     AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                                     DbConstant.ILLEGALVALUE,
                                     AdminGui.getEnvironnement().networkTransaction);
@@ -1502,10 +1496,12 @@ public class AdminR66OperationsGui extends JFrame {
                             if (future.isSuccess()) {
                                 R66Result resultRule = future.getResult();
                                 srole = resultRule.getFile().getTrueFile().getAbsolutePath();
-                                message += Messages.getString("AdminR66OperationsGui.Roles") + Messages.getString("AdminR66OperationsGui.FileInto") + srole; //$NON-NLS-1$
+                                message += Messages.getString("AdminR66OperationsGui.Roles") +
+                                           Messages.getString("AdminR66OperationsGui.FileInto") + srole; //$NON-NLS-1$
                             } else {
                                 getRoles = false;
-                                srole = Messages.getString("AdminR66OperationsGui.CantGetFile") + Messages.getString("AdminR66OperationsGui.Roles") + ": " + srole; //$NON-NLS-1$
+                                srole = Messages.getString("AdminR66OperationsGui.CantGetFile") +
+                                        Messages.getString("AdminR66OperationsGui.Roles") + ": " + srole; //$NON-NLS-1$
                                 message += srole;
                             }
                         }
@@ -1541,7 +1537,8 @@ public class AdminR66OperationsGui extends JFrame {
                     }
                     if (message.length() > 1) {
                         // error
-                        message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.123") + message; //$NON-NLS-1$
+                        message = Messages.getString("RequestInformation.Failure") +
+                                  Messages.getString("AdminR66OperationsGui.123") + message; //$NON-NLS-1$
                     } else {
                         // get config files
                         if (getHost && shost != null && !shost.isEmpty()) {
@@ -1551,8 +1548,9 @@ public class AdminR66OperationsGui extends JFrame {
                                     host.getHostid(),
                                     shost,
                                     ruleToGet,
-                                    Messages.getString("AdminR66OperationsGui.Hosts") + Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
-                                            + AdminGui.getEnvironnement().hostId,
+                                    Messages.getString("AdminR66OperationsGui.Hosts") +
+                                    Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
+                                    + AdminGui.getEnvironnement().hostId,
                                     AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                                     DbConstant.ILLEGALVALUE,
                                     AdminGui.getEnvironnement().networkTransaction);
@@ -1560,10 +1558,13 @@ public class AdminR66OperationsGui extends JFrame {
                             if (future.isSuccess()) {
                                 R66Result resultHost = future.getResult();
                                 shost = resultHost.getFile().getTrueFile().getAbsolutePath();
-                                message += Messages.getString("AdminR66OperationsGui.Hosts") + Messages.getString("AdminR66OperationsGui.FileInto") + shost + "\n"; //$NON-NLS-1$
+                                message += Messages.getString("AdminR66OperationsGui.Hosts") +
+                                           Messages.getString("AdminR66OperationsGui.FileInto") + shost +
+                                           "\n"; //$NON-NLS-1$
                             } else {
                                 getHost = false;
-                                shost = Messages.getString("AdminR66OperationsGui.CantGetFile") + Messages.getString("AdminR66OperationsGui.Hosts") + ": " + shost; //$NON-NLS-1$
+                                shost = Messages.getString("AdminR66OperationsGui.CantGetFile") +
+                                        Messages.getString("AdminR66OperationsGui.Hosts") + ": " + shost; //$NON-NLS-1$
                                 message += shost;
                             }
                         }
@@ -1574,8 +1575,9 @@ public class AdminR66OperationsGui extends JFrame {
                                     host.getHostid(),
                                     srule,
                                     ruleToGet,
-                                    Messages.getString("AdminR66OperationsGui.Rules") + Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
-                                            + AdminGui.getEnvironnement().hostId,
+                                    Messages.getString("AdminR66OperationsGui.Rules") +
+                                    Messages.getString("AdminR66OperationsGui.GetConfig") //$NON-NLS-1$
+                                    + AdminGui.getEnvironnement().hostId,
                                     AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                                     DbConstant.ILLEGALVALUE,
                                     AdminGui.getEnvironnement().networkTransaction);
@@ -1583,10 +1585,12 @@ public class AdminR66OperationsGui extends JFrame {
                             if (future.isSuccess()) {
                                 R66Result resultRule = future.getResult();
                                 srule = resultRule.getFile().getTrueFile().getAbsolutePath();
-                                message += Messages.getString("AdminR66OperationsGui.Rules") + Messages.getString("AdminR66OperationsGui.FileInto") + srule; //$NON-NLS-1$
+                                message += Messages.getString("AdminR66OperationsGui.Rules") +
+                                           Messages.getString("AdminR66OperationsGui.FileInto") + srule; //$NON-NLS-1$
                             } else {
                                 getRule = false;
-                                srule = Messages.getString("AdminR66OperationsGui.CantGetFile") + Messages.getString("AdminR66OperationsGui.Rules") + ": " + srule; //$NON-NLS-1$
+                                srule = Messages.getString("AdminR66OperationsGui.CantGetFile") +
+                                        Messages.getString("AdminR66OperationsGui.Rules") + ": " + srule; //$NON-NLS-1$
                                 message += srule;
                             }
                         }
@@ -1601,25 +1605,29 @@ public class AdminR66OperationsGui extends JFrame {
                 }
             }
             if (result.getCode() == ErrorCode.Warning) {
-                message = Messages.getString("RequestInformation.Warned") + Messages.getString("AdminR66OperationsGui.123") //$NON-NLS-1$
-                        +
-                        (result.getOther() != null ? resume + message
-                                :
-                                Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
-                        + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Warned") +
+                          Messages.getString("AdminR66OperationsGui.123") //$NON-NLS-1$
+                          +
+                          (result.getOther() != null? resume + message
+                                  :
+                                  Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
+                          + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
             } else {
-                message = Messages.getString("RequestInformation.Success") + Messages.getString("AdminR66OperationsGui.123") //$NON-NLS-1$
-                        +
-                        (result.getOther() != null ? resume + message
-                                :
-                                Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
-                        + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Success") +
+                          Messages.getString("AdminR66OperationsGui.123") //$NON-NLS-1$
+                          +
+                          (result.getOther() != null? resume + message
+                                  :
+                                  Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
+                          + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
             }
         } else {
             if (result.getCode() == ErrorCode.Warning) {
-                message = Messages.getString("RequestInformation.Warned") + Messages.getString("AdminR66OperationsGui.123") + future.getCause(); //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Warned") +
+                          Messages.getString("AdminR66OperationsGui.123") + future.getCause(); //$NON-NLS-1$
             } else {
-                message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.123") + future.getCause(); //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Failure") +
+                          Messages.getString("AdminR66OperationsGui.123") + future.getCause(); //$NON-NLS-1$
             }
         }
         AdminGui.getEnvironnement().GuiResultat = message;
@@ -1638,7 +1646,8 @@ public class AdminR66OperationsGui extends JFrame {
         String businessfile = textFieldBusiness.getText();
         String aliasfile = textFieldAlias.getText();
         String rolefile = textFieldRoles.getText();
-        long hostid = DbConstant.ILLEGALVALUE, ruleid = DbConstant.ILLEGALVALUE, businessid = DbConstant.ILLEGALVALUE, aliasid = DbConstant.ILLEGALVALUE, roleid = DbConstant.ILLEGALVALUE;
+        long hostid = DbConstant.ILLEGALVALUE, ruleid = DbConstant.ILLEGALVALUE, businessid = DbConstant.ILLEGALVALUE,
+                aliasid = DbConstant.ILLEGALVALUE, roleid = DbConstant.ILLEGALVALUE;
         boolean erazeHost = chckbxPurgeHosts.isSelected();
         boolean erazeRule = chckbxPurgeRules.isSelected();
         boolean erazeBusiness = chckbxPurgeBusiness.isSelected();
@@ -1649,10 +1658,10 @@ public class AdminR66OperationsGui extends JFrame {
         String msg = "";
         // should send config files first
         if ((hostfile == null || hostfile.isEmpty()) &&
-                (rulefile == null || rulefile.isEmpty()) &&
-                (businessfile == null || businessfile.isEmpty()) &&
-                (aliasfile == null || aliasfile.isEmpty()) &&
-                (rolefile == null || rolefile.isEmpty())) {
+            (rulefile == null || rulefile.isEmpty()) &&
+            (businessfile == null || businessfile.isEmpty()) &&
+            (aliasfile == null || aliasfile.isEmpty()) &&
+            (rolefile == null || rolefile.isEmpty())) {
             error = Messages.getString("AdminR66OperationsGui.134"); //$NON-NLS-1$
         }
         if (ruleToPut == null || ruleToPut.isEmpty()) {
@@ -1661,7 +1670,9 @@ public class AdminR66OperationsGui extends JFrame {
         String message = null;
         if (error.length() > 1) {
             // error
-            message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.123") + error; //$NON-NLS-1$
+            message =
+                    Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.123") +
+                    error; //$NON-NLS-1$
             AdminGui.getEnvironnement().GuiResultat = message;
             return;
         }
@@ -1672,8 +1683,9 @@ public class AdminR66OperationsGui extends JFrame {
                     host.getHostid(),
                     hostfile,
                     ruleToPut,
-                    Messages.getString("AdminR66OperationsGui.Hosts") + Messages.getString("AdminR66OperationsGui.SetConfig") //$NON-NLS-1$
-                            + AdminGui.getEnvironnement().hostId,
+                    Messages.getString("AdminR66OperationsGui.Hosts") +
+                    Messages.getString("AdminR66OperationsGui.SetConfig") //$NON-NLS-1$
+                    + AdminGui.getEnvironnement().hostId,
                     AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                     DbConstant.ILLEGALVALUE,
                     AdminGui.getEnvironnement().networkTransaction);
@@ -1681,13 +1693,16 @@ public class AdminR66OperationsGui extends JFrame {
             if (!future.isSuccess()) {
                 error = Messages.getString("AdminR66OperationsGui.138") + hostfile; //$NON-NLS-1$
             } else {
-                msg += " " + Messages.getString("AdminR66OperationsGui.Hosts") + Messages.getString("AdminR66OperationsGui.ConfigTransmitted"); //$NON-NLS-1$
+                msg += " " + Messages.getString("AdminR66OperationsGui.Hosts") +
+                       Messages.getString("AdminR66OperationsGui.ConfigTransmitted"); //$NON-NLS-1$
                 hostid = future.getRunner().getSpecialId();
             }
         }
         if (error.length() > 1) {
             // error
-            message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.158") + error; //$NON-NLS-1$
+            message =
+                    Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.158") +
+                    error; //$NON-NLS-1$
             AdminGui.getEnvironnement().GuiResultat = message;
             return;
         }
@@ -1698,8 +1713,9 @@ public class AdminR66OperationsGui extends JFrame {
                     host.getHostid(),
                     rulefile,
                     ruleToPut,
-                    Messages.getString("AdminR66OperationsGui.Rules") + Messages.getString("AdminR66OperationsGui.SetConfig") //$NON-NLS-1$
-                            + AdminGui.getEnvironnement().hostId,
+                    Messages.getString("AdminR66OperationsGui.Rules") +
+                    Messages.getString("AdminR66OperationsGui.SetConfig") //$NON-NLS-1$
+                    + AdminGui.getEnvironnement().hostId,
                     AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                     DbConstant.ILLEGALVALUE,
                     AdminGui.getEnvironnement().networkTransaction);
@@ -1707,13 +1723,16 @@ public class AdminR66OperationsGui extends JFrame {
             if (!future.isSuccess()) {
                 error += Messages.getString("AdminR66OperationsGui.142") + rulefile; //$NON-NLS-1$
             } else {
-                msg += " " + Messages.getString("AdminR66OperationsGui.Rules") + Messages.getString("AdminR66OperationsGui.ConfigTransmitted"); //$NON-NLS-1$
+                msg += " " + Messages.getString("AdminR66OperationsGui.Rules") +
+                       Messages.getString("AdminR66OperationsGui.ConfigTransmitted"); //$NON-NLS-1$
                 ruleid = future.getRunner().getSpecialId();
             }
         }
         if (error.length() > 1) {
             // error
-            message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.158") + error; //$NON-NLS-1$
+            message =
+                    Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.158") +
+                    error; //$NON-NLS-1$
             AdminGui.getEnvironnement().GuiResultat = message;
             return;
         }
@@ -1727,8 +1746,9 @@ public class AdminR66OperationsGui extends JFrame {
                         host.getHostid(),
                         businessfile,
                         ruleToPut,
-                        Messages.getString("AdminR66OperationsGui.Business") + Messages.getString("AdminR66OperationsGui.SetConfig") //$NON-NLS-1$
-                                + AdminGui.getEnvironnement().hostId,
+                        Messages.getString("AdminR66OperationsGui.Business") +
+                        Messages.getString("AdminR66OperationsGui.SetConfig") //$NON-NLS-1$
+                        + AdminGui.getEnvironnement().hostId,
                         AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                         DbConstant.ILLEGALVALUE,
                         AdminGui.getEnvironnement().networkTransaction);
@@ -1736,13 +1756,15 @@ public class AdminR66OperationsGui extends JFrame {
                 if (!future.isSuccess()) {
                     error += Messages.getString("AdminR66OperationsGui.142") + businessfile; //$NON-NLS-1$
                 } else {
-                    msg += " " + Messages.getString("AdminR66OperationsGui.Business") + Messages.getString("AdminR66OperationsGui.ConfigTransmitted"); //$NON-NLS-1$
+                    msg += " " + Messages.getString("AdminR66OperationsGui.Business") +
+                           Messages.getString("AdminR66OperationsGui.ConfigTransmitted"); //$NON-NLS-1$
                     businessid = future.getRunner().getSpecialId();
                 }
             }
             if (error.length() > 1) {
                 // error
-                message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.158") + error; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Failure") +
+                          Messages.getString("AdminR66OperationsGui.158") + error; //$NON-NLS-1$
                 AdminGui.getEnvironnement().GuiResultat = message;
                 return;
             }
@@ -1753,8 +1775,9 @@ public class AdminR66OperationsGui extends JFrame {
                         host.getHostid(),
                         aliasfile,
                         ruleToPut,
-                        Messages.getString("AdminR66OperationsGui.Alias") + Messages.getString("AdminR66OperationsGui.SetConfig") //$NON-NLS-1$
-                                + AdminGui.getEnvironnement().hostId,
+                        Messages.getString("AdminR66OperationsGui.Alias") +
+                        Messages.getString("AdminR66OperationsGui.SetConfig") //$NON-NLS-1$
+                        + AdminGui.getEnvironnement().hostId,
                         AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                         DbConstant.ILLEGALVALUE,
                         AdminGui.getEnvironnement().networkTransaction);
@@ -1762,13 +1785,15 @@ public class AdminR66OperationsGui extends JFrame {
                 if (!future.isSuccess()) {
                     error += Messages.getString("AdminR66OperationsGui.142") + aliasfile; //$NON-NLS-1$
                 } else {
-                    msg += " " + Messages.getString("AdminR66OperationsGui.Alias") + Messages.getString("AdminR66OperationsGui.ConfigTransmitted"); //$NON-NLS-1$
+                    msg += " " + Messages.getString("AdminR66OperationsGui.Alias") +
+                           Messages.getString("AdminR66OperationsGui.ConfigTransmitted"); //$NON-NLS-1$
                     aliasid = future.getRunner().getSpecialId();
                 }
             }
             if (error.length() > 1) {
                 // error
-                message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.158") + error; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Failure") +
+                          Messages.getString("AdminR66OperationsGui.158") + error; //$NON-NLS-1$
                 AdminGui.getEnvironnement().GuiResultat = message;
                 return;
             }
@@ -1779,8 +1804,9 @@ public class AdminR66OperationsGui extends JFrame {
                         host.getHostid(),
                         rolefile,
                         ruleToPut,
-                        Messages.getString("AdminR66OperationsGui.Roles") + Messages.getString("AdminR66OperationsGui.SetConfig") //$NON-NLS-1$
-                                + AdminGui.getEnvironnement().hostId,
+                        Messages.getString("AdminR66OperationsGui.Roles") +
+                        Messages.getString("AdminR66OperationsGui.SetConfig") //$NON-NLS-1$
+                        + AdminGui.getEnvironnement().hostId,
                         AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
                         DbConstant.ILLEGALVALUE,
                         AdminGui.getEnvironnement().networkTransaction);
@@ -1788,21 +1814,23 @@ public class AdminR66OperationsGui extends JFrame {
                 if (!future.isSuccess()) {
                     error += Messages.getString("AdminR66OperationsGui.142") + rolefile; //$NON-NLS-1$
                 } else {
-                    msg += " " + Messages.getString("AdminR66OperationsGui.Roles") + Messages.getString("AdminR66OperationsGui.ConfigTransmitted"); //$NON-NLS-1$
+                    msg += " " + Messages.getString("AdminR66OperationsGui.Roles") +
+                           Messages.getString("AdminR66OperationsGui.ConfigTransmitted"); //$NON-NLS-1$
                     roleid = future.getRunner().getSpecialId();
                 }
             }
             if (error.length() > 1) {
                 // error
-                message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.158") + error; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Failure") +
+                          Messages.getString("AdminR66OperationsGui.158") + error; //$NON-NLS-1$
                 AdminGui.getEnvironnement().GuiResultat = message;
                 return;
             }
         }
         future = new R66Future(true);
         ConfigImport importCmd = new ConfigImport(future, erazeHost, erazeRule, erazeBusiness, erazeAlias, erazeRole,
-                hostfile, rulefile, businessfile, aliasfile, rolefile,
-                AdminGui.getEnvironnement().networkTransaction);
+                                                  hostfile, rulefile, businessfile, aliasfile, rolefile,
+                                                  AdminGui.getEnvironnement().networkTransaction);
         importCmd.setSpecialIds(hostid, ruleid, businessid, aliasid, roleid);
         importCmd.setHost(host);
         importCmd.run();
@@ -1821,19 +1849,23 @@ public class AdminR66OperationsGui extends JFrame {
                 resume += msg;
             }
             if (result.getCode() == ErrorCode.Warning) {
-                message = Messages.getString("RequestInformation.Warned") + Messages.getString("AdminR66OperationsGui.158") + //$NON-NLS-1$
-                        resume
-                        + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Warned") +
+                          Messages.getString("AdminR66OperationsGui.158") + //$NON-NLS-1$
+                          resume
+                          + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
             } else {
-                message = Messages.getString("RequestInformation.Success") + Messages.getString("AdminR66OperationsGui.158") + //$NON-NLS-1$
-                        resume
-                        + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Success") +
+                          Messages.getString("AdminR66OperationsGui.158") + //$NON-NLS-1$
+                          resume
+                          + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
             }
         } else {
             if (result.getCode() == ErrorCode.Warning) {
-                message = Messages.getString("RequestInformation.Warned") + Messages.getString("AdminR66OperationsGui.158") + future.getCause() + msg; //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Warned") +
+                          Messages.getString("AdminR66OperationsGui.158") + future.getCause() + msg; //$NON-NLS-1$
             } else {
-                message = Messages.getString("RequestInformation.Failure") + Messages.getString("AdminR66OperationsGui.158") + future.getCause(); //$NON-NLS-1$
+                message = Messages.getString("RequestInformation.Failure") +
+                          Messages.getString("AdminR66OperationsGui.158") + future.getCause(); //$NON-NLS-1$
             }
         }
         AdminGui.getEnvironnement().GuiResultat = message;
@@ -1863,11 +1895,13 @@ public class AdminR66OperationsGui extends JFrame {
         }
         if (start != null) {
             System.err
-                    .println(Messages.getString("AdminR66OperationsGui.Start") + (new Date(start.getTime())).toString()); //$NON-NLS-1$
+                    .println(Messages.getString("AdminR66OperationsGui.Start") +
+                             (new Date(start.getTime())).toString()); //$NON-NLS-1$
         }
         if (stop != null) {
             System.err
-                    .println(Messages.getString("AdminR66OperationsGui.Stop") + (new Date(stop.getTime())).toString()); //$NON-NLS-1$
+                    .println(Messages.getString("AdminR66OperationsGui.Stop") +
+                             (new Date(stop.getTime())).toString()); //$NON-NLS-1$
         }
         String rulefilter = textFieldLogRule.getText();
         if (rulefilter != null && rulefilter.isEmpty()) {
@@ -1883,14 +1917,15 @@ public class AdminR66OperationsGui extends JFrame {
         logger.debug("UseJson: " + useJson); //$NON-NLS-1$
         if (useJson) {
             LogExtendedExport export = new LogExtendedExport(future, clean, purgeLog, start,
-                    stop, null, null, rulefilter, hostfilter,
-                    chckbxPending.isSelected(), chckbxRunning.isSelected(), chckbxDone.isSelected(),
-                    chckbxInError.isSelected(),
-                    AdminGui.getEnvironnement().networkTransaction, host);
+                                                             stop, null, null, rulefilter, hostfilter,
+                                                             chckbxPending.isSelected(), chckbxRunning.isSelected(),
+                                                             chckbxDone.isSelected(),
+                                                             chckbxInError.isSelected(),
+                                                             AdminGui.getEnvironnement().networkTransaction, host);
             export.run();
         } else {
             LogExport export = new LogExport(future, purgeLog, clean, start, stop,
-                    AdminGui.getEnvironnement().networkTransaction);
+                                             AdminGui.getEnvironnement().networkTransaction);
             export.setHost(host);
             export.run();
         }
@@ -1918,22 +1953,27 @@ public class AdminR66OperationsGui extends JFrame {
                 if (fileExported != null && !fileExported.isEmpty()) {
                     String ruleToExport = (String) textRuleToExportLog.getSelectedItem();
                     if (ruleToExport == null || ruleToExport.isEmpty()) {
-                        message = Messages.getString("AdminR66OperationsGui.170") + fileExported + Messages.getString("AdminR66OperationsGui.171"); //$NON-NLS-1$ //$NON-NLS-2$
+                        message = Messages.getString("AdminR66OperationsGui.170") + fileExported +
+                                  Messages.getString("AdminR66OperationsGui.171"); //$NON-NLS-1$ //$NON-NLS-2$
                     } else {
                         future = new R66Future(true);
                         DirectTransfer transfer = new DirectTransfer(future, host.getHostid(),
-                                fileExported,
-                                ruleToExport, Messages.getString("AdminR66OperationsGui.172") //$NON-NLS-1$
-                                        + AdminGui.getEnvironnement().hostId,
-                                AdminGui.getEnvironnement().isMD5, Configuration.configuration.getBLOCKSIZE(),
-                                DbConstant.ILLEGALVALUE,
-                                AdminGui.getEnvironnement().networkTransaction);
+                                                                     fileExported,
+                                                                     ruleToExport,
+                                                                     Messages.getString("AdminR66OperationsGui.172")
+                                                                     //$NON-NLS-1$
+                                                                     + AdminGui.getEnvironnement().hostId,
+                                                                     AdminGui.getEnvironnement().isMD5,
+                                                                     Configuration.configuration.getBLOCKSIZE(),
+                                                                     DbConstant.ILLEGALVALUE,
+                                                                     AdminGui.getEnvironnement().networkTransaction);
                         transfer.run();
                         if (!future.isSuccess()) {
-                            message = Messages.getString("AdminR66OperationsGui.170") + fileExported + "\n"; //$NON-NLS-1$
+                            message =
+                                    Messages.getString("AdminR66OperationsGui.170") + fileExported + "\n"; //$NON-NLS-1$
                         } else {
                             textFieldResult.setText(future.getResult().getFile().getTrueFile()
-                                    .getAbsolutePath());
+                                                          .getAbsolutePath());
                         }
                     }
                 }
@@ -1941,23 +1981,25 @@ public class AdminR66OperationsGui extends JFrame {
             if (result.getCode() == ErrorCode.Warning) {
                 message += Messages.getString(
                         "AdminR66OperationsGui.175", Messages.getString("RequestInformation.Warned")) + //$NON-NLS-1$
-                        (result.getOther() != null ? value :
-                                Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
-                        + Messages.getString("AdminR66OperationsGui.72") + delay + "\n"; //$NON-NLS-1$
+                           (result.getOther() != null? value :
+                                   Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
+                           + Messages.getString("AdminR66OperationsGui.72") + delay + "\n"; //$NON-NLS-1$
             } else {
                 message += Messages.getString(
                         "AdminR66OperationsGui.175", Messages.getString("RequestInformation.Success")) + //$NON-NLS-1$
-                        (result.getOther() != null ? value :
-                                Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
-                        + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
+                           (result.getOther() != null? value :
+                                   Messages.getString("AdminR66OperationsGui.71")) //$NON-NLS-1$
+                           + Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
             }
         } else {
             if (result.getCode() == ErrorCode.Warning) {
                 message += Messages.getString(
-                        "AdminR66OperationsGui.175", Messages.getString("RequestInformation.Warned")) + future.getCause(); //$NON-NLS-1$
+                        "AdminR66OperationsGui.175", Messages.getString("RequestInformation.Warned")) +
+                           future.getCause(); //$NON-NLS-1$
             } else {
                 message += Messages.getString(
-                        "AdminR66OperationsGui.175", Messages.getString("RequestInformation.Failure")) + future.getCause(); //$NON-NLS-1$
+                        "AdminR66OperationsGui.175", Messages.getString("RequestInformation.Failure")) +
+                           future.getCause(); //$NON-NLS-1$
             }
         }
         AdminGui.getEnvironnement().GuiResultat = message;
@@ -1999,7 +2041,9 @@ public class AdminR66OperationsGui extends JFrame {
         try {
             socketServerAddress = host.getSocketAddress();
         } catch (IllegalArgumentException e) {
-            message = Messages.getString("AdminR66OperationsGui.187") + Messages.getString("AdminR66OperationsGui.188") + host.getHostid(); //$NON-NLS-1$ //$NON-NLS-2$
+            message =
+                    Messages.getString("AdminR66OperationsGui.187") + Messages.getString("AdminR66OperationsGui.188") +
+                    host.getHostid(); //$NON-NLS-1$ //$NON-NLS-2$
             AdminGui.getEnvironnement().GuiResultat = message;
             return;
         }
@@ -2007,7 +2051,9 @@ public class AdminR66OperationsGui extends JFrame {
         localChannelReference = AdminGui.getEnvironnement().networkTransaction
                 .createConnectionWithRetry(socketServerAddress, host.isSsl(), null);
         if (localChannelReference == null) {
-            message = Messages.getString("AdminR66OperationsGui.187") + Messages.getString("AdminR66OperationsGui.188") + host.getHostid(); //$NON-NLS-1$ //$NON-NLS-2$
+            message =
+                    Messages.getString("AdminR66OperationsGui.187") + Messages.getString("AdminR66OperationsGui.188") +
+                    host.getHostid(); //$NON-NLS-1$ //$NON-NLS-2$
             AdminGui.getEnvironnement().GuiResultat = message;
             return;
         }
@@ -2019,7 +2065,9 @@ public class AdminR66OperationsGui extends JFrame {
         try {
             ChannelUtils.writeAbstractLocalPacket(localChannelReference, packet, false);
         } catch (OpenR66ProtocolPacketException e) {
-            message = Messages.getString("AdminR66OperationsGui.187") + Messages.getString("AdminR66OperationsGui.190") + host.getHostid() //$NON-NLS-1$ //$NON-NLS-2$
+            message =
+                    Messages.getString("AdminR66OperationsGui.187") + Messages.getString("AdminR66OperationsGui.190") +
+                    host.getHostid() //$NON-NLS-1$ //$NON-NLS-2$
                     + "[" + e.getMessage() + "]";
             AdminGui.getEnvironnement().GuiResultat = message;
             return;
@@ -2027,19 +2075,20 @@ public class AdminR66OperationsGui extends JFrame {
         localChannelReference.getFutureRequest().awaitUninterruptibly(180, TimeUnit.SECONDS);
         if (localChannelReference.getFutureRequest().isDone()) {
             R66Result result = localChannelReference.getFutureRequest()
-                    .getResult();
+                                                    .getResult();
             if (localChannelReference.getFutureRequest().isSuccess()) {
                 message = Messages.getString("AdminR66OperationsGui.193"); //$NON-NLS-1$
             } else {
                 if (result.getOther() instanceof ValidPacket
-                        &&
-                        ((ValidPacket) result.getOther()).getTypeValid() == LocalPacketFactory.SHUTDOWNPACKET) {
+                    &&
+                    ((ValidPacket) result.getOther()).getTypeValid() == LocalPacketFactory.SHUTDOWNPACKET) {
                     message = Messages.getString("AdminR66OperationsGui.194"); //$NON-NLS-1$
                 } else if (result.getCode() == ErrorCode.Shutdown) {
                     message = Messages.getString("AdminR66OperationsGui.195"); //$NON-NLS-1$
                 } else {
-                    message = Messages.getString("AdminR66OperationsGui.196") + result.toString() + "[" + localChannelReference //$NON-NLS-1$
-                                    .getFutureRequest().getCause() + "]";
+                    message = Messages.getString("AdminR66OperationsGui.196") + result.toString() + "[" +
+                              localChannelReference //$NON-NLS-1$
+                                                    .getFutureRequest().getCause() + "]";
                 }
             }
         } else {
@@ -2050,20 +2099,6 @@ public class AdminR66OperationsGui extends JFrame {
         long delay = time2 - time1;
         message += Messages.getString("AdminR66OperationsGui.72") + delay; //$NON-NLS-1$
         AdminGui.getEnvironnement().GuiResultat = message;
-    }
-
-    /**
-     * @return the window
-     */
-    public static AdminR66OperationsGui getWindow() {
-        return window;
-    }
-
-    /**
-     * @param window the window to set
-     */
-    public static void setWindow(AdminR66OperationsGui window) {
-        AdminR66OperationsGui.window = window;
     }
 
     public static class JTextAreaOutputStream extends OutputStream {
@@ -2083,6 +2118,57 @@ public class AdminR66OperationsGui extends JFrame {
             ta.append(s);
         }
 
+    }
+
+    /**
+     * @author Frederic Bregier
+     *
+     */
+    public class R66AdminGuiActions extends SwingWorker<String, Integer> {
+        static final int BANDWIDTHGET = 1;
+        static final int BANDWIDTHSET = 2;
+        static final int CONFIGEXPORT = 3;
+        static final int CONFIGIMPORT = 4;
+        static final int LOGEXPORT = 5;
+        static final int SHUTDOWN = 6;
+
+        int method;
+
+        R66AdminGuiActions(int method) {
+            this.method = method;
+        }
+
+        @Override
+        protected String doInBackground() throws Exception {
+            disableAllButtons();
+            startRequest();
+            switch (method) {
+            case BANDWIDTHGET:
+                getBandwidth();
+                break;
+            case BANDWIDTHSET:
+                setBandwidth();
+                break;
+            case CONFIGEXPORT:
+                getConfig();
+                break;
+            case CONFIGIMPORT:
+                setConfig();
+                break;
+            case LOGEXPORT:
+                exportLog();
+                break;
+            case SHUTDOWN:
+                shutdown();
+                break;
+            default:
+                AdminGui.getEnvironnement().GuiResultat = Messages.getString("R66ClientGui.24"); //$NON-NLS-1$
+            }
+            setStatus(AdminGui.getEnvironnement().GuiResultat);
+            showDialog();
+            stopRequest();
+            return AdminGui.getEnvironnement().GuiResultat;
+        }
     }
 
 }

@@ -1,34 +1,20 @@
 /**
  * This file is part of Waarp Project.
- * 
- * Copyright 2009, Frederic Bregier, and individual contributors by the @author tags. See the
- * COPYRIGHT.txt in the distribution for a full listing of individual contributors.
- * 
- * All Waarp Project is free software: you can redistribute it and/or modify it under the terms of
- * the GNU General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- * 
- * Waarp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
+ * <p>
+ * Copyright 2009, Frederic Bregier, and individual contributors by the @author tags. See the COPYRIGHT.txt in the
+ * distribution for a full listing of individual contributors.
+ * <p>
+ * All Waarp Project is free software: you can redistribute it and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ * <p>
+ * Waarp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * <p>
  * You should have received a copy of the GNU General Public License along with Waarp . If not, see
  * <http://www.gnu.org/licenses/>.
  */
 package org.waarp.administrator;
-
-import java.awt.EventQueue;
-import java.awt.GridBagConstraints;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-import java.awt.GridBagLayout;
-import javax.swing.JToolBar;
-import javax.swing.JButton;
 
 import org.waarp.administrator.guipwd.AdminUiPassword;
 import org.waarp.common.database.DbSession;
@@ -52,8 +38,20 @@ import org.waarp.openr66.serveraction.AdminR66OperationsGui;
 import org.waarp.uip.WaarpPassword;
 import org.waarp.xample.AdminXample;
 
-import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
+import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -63,20 +61,13 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.awt.Insets;
-import javax.swing.ImageIcon;
 
 public class AdminGui {
     /**
      * Internal Logger
      */
     static volatile WaarpLogger logger;
-
-    private JFrame frmWaarpRCentral;
-    private List<AdminXample> xamples = new ArrayList<AdminXample>();
-    private List<AdminUiPassword> passwords = new ArrayList<AdminUiPassword>();
     private static R66Environment environnement = new R66Environment();
-
     JButton btnEditXml;
     JButton btnCheckPartners;
     JButton btnEditPassword;
@@ -84,6 +75,16 @@ public class AdminGui {
     JButton btnQuit;
     JButton btnManageLogs;
     JButton btnFileTransfer;
+    private JFrame frmWaarpRCentral;
+    private List<AdminXample> xamples = new ArrayList<AdminXample>();
+    private List<AdminUiPassword> passwords = new ArrayList<AdminUiPassword>();
+
+    /**
+     * Create the application.
+     */
+    public AdminGui() {
+        initialize();
+    }
 
     protected static boolean getParams(String[] args) {
         if (args.length < 1) {
@@ -119,7 +120,7 @@ public class AdminGui {
         if (!getParams(args)) {
             logger.error(Messages.getString("Configuration.WrongInit")); //$NON-NLS-1$
             JOptionPane.showMessageDialog(null, Messages.getString("Configuration.WrongInit"), //$NON-NLS-1$
-                    "Attention", JOptionPane.WARNING_MESSAGE);
+                                          "Attention", JOptionPane.WARNING_MESSAGE);
             if (DbConstant.admin != null && DbConstant.admin.isActive()) {
                 DbConstant.admin.close();
             }
@@ -161,10 +162,10 @@ public class AdminGui {
     }
 
     /**
-     * Create the application.
+     * @return the environnement
      */
-    public AdminGui() {
-        initialize();
+    public static R66Environment getEnvironnement() {
+        return environnement;
     }
 
     private void langReinit() {
@@ -218,7 +219,7 @@ public class AdminGui {
                     TestPacket packet;
                     String myhost = null;
                     try {
-                        myhost = (AdminGui.getEnvironnement().hostId == null ?
+                        myhost = (AdminGui.getEnvironnement().hostId == null?
                                 InetAddress.getLocalHost().getHostName() : AdminGui.getEnvironnement().hostId);
                     } catch (UnknownHostException e) {
                         myhost = Messages.getString("AdminGui.NameUnknown");
@@ -227,10 +228,11 @@ public class AdminGui {
                             , 100);
                     packet.retain();
                     String result = Messages.getString("AdminGui.CheckedHosts");
-                    DbSession session = DbConstant.admin != null ? DbConstant.admin.getSession() : null;
+                    DbSession session = DbConstant.admin != null? DbConstant.admin.getSession() : null;
                     for (DbHostAuth host : DbHostAuth.getAllHosts(session)) {
                         R66Future future = new R66Future(true);
-                        Message mesg = new Message(AdminGui.getEnvironnement().networkTransaction, future, host, packet);
+                        Message mesg =
+                                new Message(AdminGui.getEnvironnement().networkTransaction, future, host, packet);
                         mesg.run();
                         packet.retain();
                         future.awaitUninterruptibly();
@@ -405,12 +407,5 @@ public class AdminGui {
         }
         frmWaarpRCentral.dispose();
         System.exit(0);
-    }
-
-    /**
-     * @return the environnement
-     */
-    public static R66Environment getEnvironnement() {
-        return environnement;
     }
 }
