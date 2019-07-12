@@ -17,6 +17,9 @@
  * Extension of Xample for unification in Administrator
  *
  * @author Frederic Bregier
+ * <p>
+ * Extension of Xample for unification in Administrator
+ * @author Frederic Bregier
  */
 /**
  * Extension of Xample for unification in Administrator

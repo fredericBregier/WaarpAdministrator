@@ -17,6 +17,9 @@
  * Integrate remote actions on R66 servers
  *
  * @author Frederic Bregier
+ * <p>
+ * Integrate remote actions on R66 servers
+ * @author Frederic Bregier
  */
 /**
  * Integrate remote actions on R66 servers

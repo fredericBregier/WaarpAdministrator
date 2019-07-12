@@ -19,7 +19,6 @@ package org.waarp.openr66.serveraction;
 import org.waarp.administrator.AdminGui;
 import org.waarp.common.database.DbSession;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
-import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.digest.FilesystemBasedDigest;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
@@ -98,7 +97,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author "Frederic Bregier"
- *
  */
 public class AdminR66OperationsGui extends JFrame {
     /**
@@ -175,6 +173,7 @@ public class AdminR66OperationsGui extends JFrame {
     private JRadioButton rdbtnShutdown;
     private JRadioButton rdbtnBlock;
     private JCheckBox chckbxRestart;
+
     /**
      * @throws HeadlessException
      */
@@ -272,12 +271,8 @@ public class AdminR66OperationsGui extends JFrame {
         System.setOut(new PrintStream(new JTextAreaOutputStream(textPaneLog)));
         DbSession session = DbConstant.admin != null? DbConstant.admin.getSession() : null;
         try {
-            comboBoxServer = new JComboBox(DbHostAuth.getAllHosts(session));
+            comboBoxServer = new JComboBox(DbHostAuth.getAllHosts());
         } catch (WaarpDatabaseNoConnectionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return;
-        } catch (WaarpDatabaseSqlException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return;
@@ -1173,16 +1168,12 @@ public class AdminR66OperationsGui extends JFrame {
             int idx = comboBoxServer.getSelectedIndex();
             comboBoxServer.removeAllItems();
             DbSession session = DbConstant.admin != null? DbConstant.admin.getSession() : null;
-            for (DbHostAuth auth : DbHostAuth.getAllHosts(session)) {
+            for (DbHostAuth auth : DbHostAuth.getAllHosts()) {
                 //System.err.println("Add: "+auth.toString());
                 comboBoxServer.addItem(auth);
             }
             comboBoxServer.setSelectedIndex(idx);
         } catch (WaarpDatabaseNoConnectionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return;
-        } catch (WaarpDatabaseSqlException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return;
@@ -2122,7 +2113,6 @@ public class AdminR66OperationsGui extends JFrame {
 
     /**
      * @author Frederic Bregier
-     *
      */
     public class R66AdminGuiActions extends SwingWorker<String, Integer> {
         static final int BANDWIDTHGET = 1;

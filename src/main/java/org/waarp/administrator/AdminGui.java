@@ -19,7 +19,6 @@ package org.waarp.administrator;
 import org.waarp.administrator.guipwd.AdminUiPassword;
 import org.waarp.common.database.DbSession;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
-import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.common.logging.WaarpSlf4JLoggerFactory;
@@ -229,7 +228,7 @@ public class AdminGui {
                     packet.retain();
                     String result = Messages.getString("AdminGui.CheckedHosts");
                     DbSession session = DbConstant.admin != null? DbConstant.admin.getSession() : null;
-                    for (DbHostAuth host : DbHostAuth.getAllHosts(session)) {
+                    for (DbHostAuth host : DbHostAuth.getAllHosts()) {
                         R66Future future = new R66Future(true);
                         Message mesg =
                                 new Message(AdminGui.getEnvironnement().networkTransaction, future, host, packet);
@@ -246,9 +245,6 @@ public class AdminGui {
                     ;
                     JOptionPane.showMessageDialog(null, result);
                 } catch (WaarpDatabaseNoConnectionException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (WaarpDatabaseSqlException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }

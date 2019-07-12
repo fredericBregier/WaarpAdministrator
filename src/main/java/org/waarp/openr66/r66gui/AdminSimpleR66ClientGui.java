@@ -22,7 +22,6 @@ import org.waarp.administrator.AdminGui;
  * R66 Simple client GUI
  *
  * @author Frederic Bregier
- *
  */
 public class AdminSimpleR66ClientGui extends R66ClientGui {
 

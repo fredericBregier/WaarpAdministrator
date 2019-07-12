@@ -17,6 +17,9 @@
  * Extension for Administrator
  *
  * @author Frederic Bregier
+ * <p>
+ * Extension for Administrator
+ * @author Frederic Bregier
  */
 /**
  * Extension for Administrator

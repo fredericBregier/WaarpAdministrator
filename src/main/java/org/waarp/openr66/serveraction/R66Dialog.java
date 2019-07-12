@@ -30,7 +30,6 @@ import java.awt.event.ActionListener;
 
 /**
  * @author Frederic Bregier
- *
  */
 public class R66Dialog extends JDialog {
 

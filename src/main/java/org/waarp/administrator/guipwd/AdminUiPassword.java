@@ -25,7 +25,6 @@ import java.util.List;
  * Password Gui helper
  *
  * @author Frederic Bregier
- *
  */
 public class AdminUiPassword extends WaarpUiPassword {
 

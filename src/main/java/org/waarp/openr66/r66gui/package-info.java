@@ -17,6 +17,9 @@
  * Adaptation to Administrator
  *
  * @author Frederic Bregier
+ * <p>
+ * Adaptation to Administrator
+ * @author Frederic Bregier
  */
 /**
  * Adaptation to Administrator

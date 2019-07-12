@@ -23,7 +23,6 @@ import java.io.File;
  * File extension filter
  *
  * @author "Frederic Bregier"
- *
  */
 public class FileExtensionFilter extends FileFilter {
     private String description = "All Files";
@@ -38,6 +37,7 @@ public class FileExtensionFilter extends FileFilter {
      * Get extension file
      *
      * @param f
+     *
      * @return the extension
      */
     public static String getExtension(File f) {
